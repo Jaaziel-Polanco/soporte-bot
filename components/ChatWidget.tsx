@@ -3,34 +3,52 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Paper, Box, TextField, IconButton, Typography, Button } from '@mui/material';
 import { Send } from 'lucide-react';
+import Image from 'next/image';
 import { useChatStore } from '../store/useChatStore';
 import IntentsModal from './IntentsModal'; // Ajusta la ruta según tu estructura
-import Image from 'next/image';
 
 const ChatWidget: React.FC = () => {
-    const { messages, addMessage, handleUserQuery, selectIntent, getFilteredIntents } = useChatStore();
+    const { messages, addMessage, selectIntent, getFilteredIntents } = useChatStore();
     const [input, setInput] = useState<string>('');
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
+    // Agrega mensaje de bienvenida al inicio
     useEffect(() => {
         if (messages.length === 0) {
             addMessage({ type: 'bot', text: "¡Bienvenido al Chat de Soporte! ¿En qué puedo ayudarte hoy?" });
         }
     }, [messages, addMessage]);
 
+    // Scroll automático al final cuando se agregan mensajes
     useEffect(() => {
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     }, [messages]);
 
+    // Filtra los intents según el input y muestra solo 4 inicialmente
     const filteredIntents = getFilteredIntents(input);
     const intentsToShow = filteredIntents.slice(0, 4);
 
-    const handleSend = () => {
+    const handleSend = async () => {
         if (input.trim() === '') return;
-        handleUserQuery(input);
+        addMessage({ type: 'user', text: input });
+        addMessage({ type: 'bot', text: "Procesando..." });
+
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: input })
+            });
+
+            const data = await response.json();
+            addMessage({ type: 'bot', text: data.answer || "No entendí tu mensaje." });
+        } catch {
+            addMessage({ type: 'bot', text: "Error en la conexión con el servicio de IA." });
+        }
+
         setInput('');
     };
 
@@ -41,7 +59,9 @@ const ChatWidget: React.FC = () => {
                 <Image
                     src="/image.png"
                     alt="Logo Claro"
-                    className="w-12 h-12 object-contain"
+                    width={48}
+                    height={48}
+                    className="object-contain"
                 />
                 <Typography variant="h4" className="text-[#E60000] font-extrabold drop-shadow-lg">
                     Centro de Operaciones y Aprovisionamiento
@@ -49,12 +69,14 @@ const ChatWidget: React.FC = () => {
             </Box>
 
             <Paper elevation={3} className="w-full max-w-md rounded-lg overflow-hidden">
-                {/* Header del Chat con Claro red */}
+                {/* Header del Chat con fondo Claro */}
                 <Box className="bg-[#E60000] p-4 flex items-center gap-2">
                     <Image
                         src="/image.png"
                         alt="Logo Claro"
-                        className="w-8 h-8 object-contain"
+                        width={32}
+                        height={32}
+                        className="object-contain"
                     />
                     <Typography variant="h6" className="text-white font-semibold">
                         Chat Soporte
@@ -83,10 +105,11 @@ const ChatWidget: React.FC = () => {
                             </Box>
                         </motion.div>
                     ))}
+                    {/* Elemento para el scroll automático */}
                     <div ref={messagesEndRef} />
                 </Box>
 
-                {/* Área de intents filtrados y entrada */}
+                {/* Área de sugerencias y entrada */}
                 <Box className="p-4 border-t border-gray-300">
                     <Box className="mb-2 flex flex-wrap gap-2">
                         {intentsToShow.map((intent, idx) => (
@@ -105,16 +128,19 @@ const ChatWidget: React.FC = () => {
                             fullWidth
                             variant="outlined"
                             size="small"
-                            placeholder="Describe tu problema o elige una opción"
+                            placeholder="Escribe tu consulta en lenguaje natural..."
                             value={input}
-                            onChange={(e) => {
-                                setInput(e.target.value);
-                                if (e.target.value === "") setModalOpen(false);
-                            }}
+                            onChange={(e) => setInput(e.target.value)}
                             onKeyPress={(e) => {
-                                if (e.key === 'Enter') handleSend();
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    handleSend();
+                                }
                             }}
+                            multiline
+                            maxRows={4}
                         />
+
                         <IconButton color="primary" onClick={handleSend}>
                             <Send />
                         </IconButton>

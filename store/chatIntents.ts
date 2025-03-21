@@ -17,7 +17,15 @@ export const chatIntents: ChatIntent[] = [
     examples: [
       "¿Qué pasos debo seguir para validar una orden?",
       "¿Cómo verifico si una orden está lista para procesar?",
-      "¿Qué hacer si encuentro discrepancias en una orden?"
+      "¿Qué hacer si encuentro discrepancias en una orden?",
+      "Necesito confirmar una orden en Kunai, ¿qué debo revisar?",
+      "¿Dónde veo el técnico asignado a una orden?",
+      "La orden no aparece en NetCracker, ¿cómo proceder?",
+      "¿Cómo validar los datos del cliente en una orden nueva?",
+      "¿Qué significa el estado 'Iniciado' en Kunai?",
+      "¿Cuál es el flujo de verificación de órdenes?",
+      "¿Qué campos clave debo revisar en una orden de servicio?",
+      "Como verifico una orden?",
     ],
     response: `
 **Pasos para verificación:**
@@ -46,8 +54,10 @@ export const chatIntents: ChatIntent[] = [
     description: "Actualización de terminales y puertos de fibra",
     examples: [
       "¿Cómo actualizo la terminal GPON en NetCracker?",
-      "¿Cuál es el procedimiento para cambiar la posición de la fibra?",
-      "¿Qué hacer si el técnico reporta una nueva cabina?"
+      "¿Cuál es el procedimiento para cambiar la facilidades de la fibra?",
+      "El técnico solicita cambiar la terminal de fibra",
+      "Pasos para reasignar una terminal GPON",
+      "Como hago un cambio de facilidades GPON/fibra?",
     ],
     response: `
 **Proceso paso a paso:**
@@ -75,12 +85,13 @@ export const chatIntents: ChatIntent[] = [
   // 3) Gestión de puertos y configuraciones
   {
     id: "gestion_puertos",
-    title: "Gestión de puertos y configuraciones",
+    title: "Configuracion De puertos",
     description: "Operaciones básicas en el Sistema de Puertos",
     examples: [
       "¿Cómo agrego un servicio de Internet en GPON?",
-      "¿Qué significa LinkState Up/Down?",
-      "¿Cómo interpreto la velocidad de un puerto?"
+      "¿Qué significa Up/Down?",
+      "¿Cómo interpreto la velocidad de un puerto?",
+      "Como Configuro un puerto?"
     ],
     response: `
 **Procedimientos clave:**
