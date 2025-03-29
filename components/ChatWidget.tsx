@@ -55,7 +55,7 @@ const ChatWidget: React.FC = () => {
     return (
         <div className="flex flex-col items-center">
             {/* Encabezado superior con logo y título */}
-            <Box className="mb-6 flex items-center gap-4">
+            <Box className="mb-6 flex items-center gap-4 blur-sm">
                 <Image
                     src="/image.png"
                     alt="Logo Claro"
@@ -76,7 +76,7 @@ const ChatWidget: React.FC = () => {
                         alt="Logo Claro"
                         width={32}
                         height={32}
-                        className="object-contain"
+                        className="object-contain blur-xs"
                     />
                     <Typography variant="h6" className="text-white font-semibold">
                         Chat Soporte
@@ -128,7 +128,7 @@ const ChatWidget: React.FC = () => {
                             fullWidth
                             variant="outlined"
                             size="small"
-                            placeholder="Escribe tu consulta en lenguaje natural..."
+                            placeholder="Escribe tu consulta..."
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyPress={(e) => {
